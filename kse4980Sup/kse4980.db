@@ -17,3 +17,71 @@ record(bo, "$(P)DISABLE")
     field(ZNAM, "COMMS ENABLED")
     field(ONAM, "COMMS DISABLED")
 }
+
+record(bo, "$(P)RESET")
+{
+    field(DESC, "Reset and initialise")
+    field(DTYP, "stream")
+    field(PINI, "YES")
+    field(OUT, "@kse4980.proto reset $(PORT)")
+}
+
+record(stringin, "$(P):ID") {
+  field(DESC, "The device ID")
+  field(DTYP, "stream")
+  field(SDIS, "$(P):DISABLE")
+  field(INP, "@kse4980.proto getID $(PORT)")
+  field(SCAN, "Passive")
+  field(PINI, "YES")
+  field(SIML, "$(P):SIM")
+  field(SIOL, "$(P):SIM:ID CP")
+}
+
+record(bo, "$(P):AUTORANGE:SP")
+{
+
+}
+
+# TODO alias sp:rbv? 
+
+record(bi, "$(P)AUTORANGE")
+{
+
+}
+
+record(mbbo, "$(P)MEAS_TIME:SP")
+{
+
+}
+# TODO alias sp:rbv? 
+
+record(mbbi, "$(P)MEAS_TIME")
+{
+
+}
+
+record(mbbo, "$(P)FUNC:SP")
+{
+
+}
+# TODO alias sp:rbv? 
+
+record(mbbi, "$(P)FUNC")
+{
+
+}
+
+record(ai, "$(P)PRIMARY")
+{
+    # interest high, units forwardable
+}
+
+record(ai, "$(P)SECONDARY")
+{
+
+}
+
+record(longin, "$(P)ERRORID")
+
+record(stringin, "$(P)ERRORMSG")
+

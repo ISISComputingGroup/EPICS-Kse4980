@@ -1,18 +1,18 @@
+Terminator = "\r\n";
+ReplyTimeout = 1000;
+
 getIDN {
-    out "*IDN?";
-    in "%\$1[^\r\n]";
-    ExtraInput = Ignore;
+   out "*IDN?";
+   in "%s";
 }
 
-cmd {
-    out "\$1";
+
+reset { 
+    out "*RST;:INIT;";
 }
 
-setD {
-    out "\$1 %d";
+readError {
+    out "SYST:ERR?";
+    in "+%d,%s";
 }
-getD {
-    out "\$1?";
-    in "%d";
-    ExtraInput = Ignore;
-}
+
