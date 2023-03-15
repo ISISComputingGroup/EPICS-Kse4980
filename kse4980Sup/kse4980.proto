@@ -2,7 +2,7 @@ OutTerminator = "\r\n";
 InTerminator = "\n";
 ReplyTimeout = 1000;
 
-errstr = ";SYST:ERR?";
+errstr = ";:SYST:ERR?";
 
 getIDN {
     out "*IDN?";
@@ -15,10 +15,79 @@ reset {
 }
 
 parseError {
-    in "+%(\$1ERRORID)d,%(\$1ERRORMSG)s";
+    in "%(\$1ERRORID)d,%(\$1ERRORMSG)/(.{0,39})/";
 }
 
 fetchReadings {
     out ":FETC?";
     in "%e,%(\$1)e,%*d";
 }
+
+getFunc { 
+    out ":FUNC:IMP?";
+    in "%s";
+}
+
+setFunc {
+    # chaka khan 
+    out ":FUNC:IMP %s" $errstr;
+    parseError;
+}
+
+setAutoRange { 
+    out ":FUNC:IMP:RANG:AUTO %s" $errstr;
+    parseError;
+}
+
+getAutoRange { 
+    out ":FUNC:IMP:RANG:AUTO?";
+    in "%s";
+}
+
+getManualImpRange {
+    out ":FUNC:IMP:RANG?";
+    in "%s";
+}
+
+setManualImpRange {
+    out ":FUNC:IMP:RANG %s" $errstr;
+    parseError;
+}
+
+setSignalFreq {
+    out ":FREQ %e" $errstr;
+    parseError;
+}
+
+getSignalFreq {
+    out ":FREQ?";
+    in "%e";
+}
+
+setSignalType {
+    #TODO 
+    #out ":FUNC:IMP:RANG %e" $errstr;
+}
+
+getSignalType {
+
+}
+
+setSignalLevel {
+
+}
+
+getSignalLevel {
+
+}
+
+setMeasurementTimeAndAveragingFactor {
+    out ":APER %s ,\$2" $errstr;
+    parseError;
+}
+
+getMeasurementTimeAndAveragingFactor {
+    out ":APER?";
+    in "%s %(\$1)s";
+}
+
