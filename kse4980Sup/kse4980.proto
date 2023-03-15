@@ -35,22 +35,22 @@ setFunc {
 }
 
 setAutoRange { 
-    out ":FUNC:IMP:RANG:AUTO %s" $errstr;
+    out ":FUNC:IMP:RANG:AUTO %d" $errstr;
     parseError;
 }
 
 getAutoRange { 
     out ":FUNC:IMP:RANG:AUTO?";
-    in "%s";
+    in "%d";
 }
 
 getManualImpRange {
     out ":FUNC:IMP:RANG?";
-    in "%s";
+    in "%m";
 }
 
 setManualImpRange {
-    out ":FUNC:IMP:RANG %s" $errstr;
+    out ":FUNC:IMP:RANG %m" $errstr;
     parseError;
 }
 
@@ -64,30 +64,23 @@ getSignalFreq {
     in "%e";
 }
 
-setSignalType {
-    #TODO 
-    #out ":FUNC:IMP:RANG %e" $errstr;
+setSignalTypeAndLevel {
+    out "%s,%(\$2)d" $errstr;
+    parseError;
 }
 
-getSignalType {
-
-}
-
-setSignalLevel {
-
-}
-
-getSignalLevel {
-
+getSignalTypeAndLevel {
+    out "%s?";
+    in "%($2)d";
 }
 
 setMeasurementTimeAndAveragingFactor {
-    out ":APER %s ,\$2" $errstr;
+    out ":APER %s,%(\$2)d" $errstr;
     parseError;
 }
 
 getMeasurementTimeAndAveragingFactor {
     out ":APER?";
-    in "%s %(\$1)s";
+    in "%[A-Z],%(\$1.VAL)d";
 }
 

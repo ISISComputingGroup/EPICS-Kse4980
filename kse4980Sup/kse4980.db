@@ -22,7 +22,6 @@ record(bo, "$(P)RESET")
 {
     field(DESC, "Reset and initialise")
     field(DTYP, "stream")
-    field(PINI, "YES")
     field(OUT, "@kse4980.proto reset $(PORT)")
 }
 
@@ -57,66 +56,92 @@ record(bi, "$(P)AUTORANGE")
     field(ONAM, "ON")
 }
 
-record(mbbi, "$(P)IMPRANGE")
-{
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-
-    field(ZRST, "1E-1")
-    field(ONST, "1E+0")
-    field(TWST, "1E+1")
-    field(THST, "1E+2")
-    field(FRST, "3E+2")
-    field(FVST, "1E+3")
-    field(SXST, "3E+3")
-    field(SVST, "1E+4")
-    field(EIST, "3E+4")
-    field(NIST, "1E+5")
-    field(INP, "@kse4980.proto getManualImpRange $(PORT)")
-
-
-}
-
-record(mbbo, "$(P)IMPRANGE:SP")
-{
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-
-    field(ZRST, "1E-1")
-    field(ONST, "1E+0")
-    field(TWST, "1E+1")
-    field(THST, "1E+2")
-    field(FRST, "3E+2")
-    field(FVST, "1E+3")
-    field(SXST, "3E+3")
-    field(SVST, "1E+4")
-    field(EIST, "3E+4")
-    field(NIST, "1E+5")
-    field(OUT, "@kse4980.proto setManualImpRange($(P)) $(PORT)")
-
-}
+#record(mbbi, "$(P)IMPRANGE")
+#{
+#    field(DTYP, "stream")
+#    field(SCAN, "1 second")
+#
+#    field(ZRST, "1E-1")
+#    field(ONST, "1E+0")
+#    field(TWST, "1E+1")
+#    field(THST, "1E+2")
+#    field(FRST, "3E+2")
+#    field(FVST, "1E+3")
+#    field(SXST, "3E+3")
+#    field(SVST, "1E+4")
+#    field(EIST, "3E+4")
+#    field(NIST, "1E+5")
+#
+#    field(ZRVL, "0.1")
+#    field(ONVL, "1")
+#    field(TWVL, "10")
+#    field(THVL, "100")
+#    field(FRVL, "300")
+#    field(FVVL, "1000")
+#    field(SXVL, "3000")
+#    field(SVVL, "10000")
+#    field(EIVL, "30000")
+#    field(NIVL, "100000")
+#
+#    field(INP, "@kse4980.proto getManualImpRange $(PORT)")
+#}
+#
+#record(mbbo, "$(P)IMPRANGE:SP")
+#{
+#    field(DTYP, "stream")
+#
+#    field(ZRST, "1E-1")
+#    field(ONST, "1E+0")
+#    field(TWST, "1E+1")
+#    field(THST, "1E+2")
+#    field(FRST, "3E+2")
+#    field(FVST, "1E+3")
+#    field(SXST, "3E+3")
+#    field(SVST, "1E+4")
+#    field(EIST, "3E+4")
+#    field(NIST, "1E+5")
+#
+#    field(ZRVL, "0.1")
+#    field(ONVL, "1")
+#    field(TWVL, "10")
+#    field(THVL, "100")
+#    field(FRVL, "300")
+#    field(FVVL, "1000")
+#    field(SXVL, "3000")
+#    field(SVVL, "10000")
+#    field(EIVL, "30000")
+#    field(NIVL, "100000")
+#
+#    field(OUT, "@kse4980.proto setManualImpRange($(P)) $(PORT)")
+#
+#}
 
 record(mbbo, "$(P)MEAS_TIME:SP")
 {
     field(DTYP, "stream")
     field(OUT, "@kse4980.proto setMeasurementTimeAndAveragingFactor($(P), $(P)AVG_FACTOR:SP) $(PORT)")
+    field(ZRST, "SHORT")
+    field(ONST, "MED")
+    field(TWST, "LONG")
 }
 # TODO alias sp:rbv? 
 
 record(mbbi, "$(P)MEAS_TIME")
 {
+    field(DTYP, "stream")
     field(SCAN, "1 second")
     field(INP, "@kse4980.proto getMeasurementTimeAndAveragingFactor($(P)AVG_FACTOR) $(PORT)")
+    field(ZRST, "SHORT")
+    field(ONST, "MED")
+    field(TWST, "LONG")
 }
 
 record(longin, "$(P)AVG_FACTOR")
 {
-    field(DTYP, "Soft Channel")
 }
 
 record(longout, "$(P)AVG_FACTOR:SP")
 {
-    field(DTYP, "stream")
     field(FLNK, "$(P)MEAS_TIME:SP")
 }
 
@@ -161,6 +186,7 @@ record(longin, "$(P)ERRORID")
 {
     field(DESC, "Numeric Err ID")
     field(DTYP, "Soft Channel")
+    field(HIHI, "1")
 }
 
 record(stringin, "$(P)ERRORMSG")
