@@ -1,18 +1,24 @@
-Terminator = "\r\n";
+OutTerminator = "\r\n";
+InTerminator = "\n";
 ReplyTimeout = 1000;
 
-getIDN {
-   out "*IDN?";
-   in "%s";
-}
+errstr = ";SYST:ERR?";
 
+getIDN {
+    out "*IDN?";
+    in "%/(.{0,39})/";
+    ExtraInput = Ignore;
+}
 
 reset { 
     out "*RST;:INIT;";
 }
 
-readError {
-    out "SYST:ERR?";
-    in "+%d,%s";
+parseError {
+    in "+%(\$1ERRORID)d,%(\$1ERRORMSG)s";
 }
 
+fetchReadings {
+    out ":FETC?";
+    in "%e,%(\$1)e,%*d";
+}

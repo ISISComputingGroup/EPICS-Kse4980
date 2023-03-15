@@ -26,11 +26,11 @@ record(bo, "$(P)RESET")
     field(OUT, "@kse4980.proto reset $(PORT)")
 }
 
-record(stringin, "$(P):ID") {
+record(stringin, "$(P)ID") {
   field(DESC, "The device ID")
   field(DTYP, "stream")
   field(SDIS, "$(P):DISABLE")
-  field(INP, "@kse4980.proto getID $(PORT)")
+  field(INP, "@kse4980.proto getIDN $(PORT)")
   field(SCAN, "Passive")
   field(PINI, "YES")
   field(SIML, "$(P):SIM")
@@ -74,11 +74,14 @@ record(mbbi, "$(P)FUNC")
 record(ai, "$(P)PRIMARY")
 {
     # interest high, units forwardable
+    field(INP, "@kse4980.proto fetchReadings($(P)SECONDARY) $(PORT)")
+    field(DTYP, "stream")
+    field(SCAN, ".1 second")
 }
 
 record(ai, "$(P)SECONDARY")
 {
-
+    field(DTYP, "Soft Channel")
 }
 
 record(longin, "$(P)ERRORID")
