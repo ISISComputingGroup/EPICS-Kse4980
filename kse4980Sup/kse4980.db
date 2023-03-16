@@ -26,14 +26,14 @@ record(bo, "$(P)RESET")
 }
 
 record(stringin, "$(P)ID") {
-  field(DESC, "The device ID")
-  field(DTYP, "stream")
-  field(SDIS, "$(P):DISABLE")
-  field(INP, "@kse4980.proto getIDN $(PORT)")
-  field(SCAN, "Passive")
-  field(PINI, "YES")
-  field(SIML, "$(P):SIM")
-  field(SIOL, "$(P):SIM:ID CP")
+    field(DESC, "The device ID")
+    field(DTYP, "stream")
+    field(SDIS, "$(P):DISABLE")
+    field(INP, "@kse4980.proto getIDN $(PORT)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(SIML, "$(P):SIM")
+    field(SIOL, "$(P):SIM:ID CP")
 }
 
 record(bo, "$(P)AUTORANGE:SP")
@@ -42,79 +42,105 @@ record(bo, "$(P)AUTORANGE:SP")
     field(OUT, "@kse4980.proto setAutoRange($(P)) $(PORT)")
     field(ZNAM, "OFF")
     field(ONAM, "ON")
-
 }
 
 # TODO alias sp:rbv? 
 
 record(bi, "$(P)AUTORANGE")
 {
-        field(DTYP, "stream")
+    field(DTYP, "stream")
     field(INP, "@kse4980.proto getAutoRange $(PORT)")
     field(SCAN, "1 second")
     field(ZNAM, "OFF")
     field(ONAM, "ON")
 }
 
-#record(mbbi, "$(P)IMPRANGE")
-#{
-#    field(DTYP, "stream")
-#    field(SCAN, "1 second")
-#
-#    field(ZRST, "1E-1")
-#    field(ONST, "1E+0")
-#    field(TWST, "1E+1")
-#    field(THST, "1E+2")
-#    field(FRST, "3E+2")
-#    field(FVST, "1E+3")
-#    field(SXST, "3E+3")
-#    field(SVST, "1E+4")
-#    field(EIST, "3E+4")
-#    field(NIST, "1E+5")
-#
-#    field(ZRVL, "0.1")
-#    field(ONVL, "1")
-#    field(TWVL, "10")
-#    field(THVL, "100")
-#    field(FRVL, "300")
-#    field(FVVL, "1000")
-#    field(SXVL, "3000")
-#    field(SVVL, "10000")
-#    field(EIVL, "30000")
-#    field(NIVL, "100000")
-#
-#    field(INP, "@kse4980.proto getManualImpRange $(PORT)")
-#}
-#
-#record(mbbo, "$(P)IMPRANGE:SP")
-#{
-#    field(DTYP, "stream")
-#
-#    field(ZRST, "1E-1")
-#    field(ONST, "1E+0")
-#    field(TWST, "1E+1")
-#    field(THST, "1E+2")
-#    field(FRST, "3E+2")
-#    field(FVST, "1E+3")
-#    field(SXST, "3E+3")
-#    field(SVST, "1E+4")
-#    field(EIST, "3E+4")
-#    field(NIST, "1E+5")
-#
-#    field(ZRVL, "0.1")
-#    field(ONVL, "1")
-#    field(TWVL, "10")
-#    field(THVL, "100")
-#    field(FRVL, "300")
-#    field(FVVL, "1000")
-#    field(SXVL, "3000")
-#    field(SVVL, "10000")
-#    field(EIVL, "30000")
-#    field(NIVL, "100000")
-#
-#    field(OUT, "@kse4980.proto setManualImpRange($(P)) $(PORT)")
-#
-#}
+record(bi, "$(P)SIGNALTYPE")
+{
+    field(DTYP, "stream")
+    field(INP, "@kse4980.proto getSignalTypeAndLevel($(P)SIGNALLEVEL) $(PORT)")
+    field(SCAN, "1 second")
+    field(ZNAM, "CURR")
+    field(ONAM, "VOLT")
+}
+
+record(bo, "$(P)SIGNALTYPE:SP")
+{
+    field(DTYP, "stream")
+    field(OUT, "@kse4980.proto setSignalTypeAndLevel($(P), $(P)SIGNALLEVEL:SP) $(PORT)")
+    field(ZNAM, "CURR")
+    field(ONAM, "VOLT")
+    #field(VAL, "$(P)SIGNALTYPE")
+    #todo needs init on signal type? 
+}
+
+record(longin, "$(P)SIGNALLEVEL")
+{
+}
+
+record(longout, "$(P)SIGNALLEVEL:SP")
+{
+    field(FLNK, "SIGNALTYPE:SP")
+    field(VAL, "0")
+}
+
+record(ao, "$(P)FREQ:SP")
+{
+    field(DESC, "Signal Frequency setpoint")
+    field(OUT, "@kse4980.proto setSignalFreq($(P)) $(PORT)")
+    field(DTYP, "stream")
+    info(archive, "VAL")
+    info(interest, "HIGH")
+}
+
+record(ai, "$(P)FREQ")
+{
+    field(DESC, "Signal Frequency")
+    field(INP, "@kse4980.proto getSignalFreq $(PORT)")
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
+    info(archive, "VAL")
+    info(interest, "HIGH")
+}
+
+record(mbbi, "$(P)IMPRANGE")
+{
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
+
+    field(ZRST, "100m")
+    field(ONST, "1")
+    field(TWST, "10")
+    field(THST, "100")
+    field(FRST, "300")
+    field(FVST, "1k")
+    field(SXST, "3k")
+    field(SVST, "10k")
+    field(EIST, "30k")
+    field(NIST, "100k")
+    field(EGU, "ohms")
+
+    field(INP, "@kse4980.proto getManualImpRange $(PORT)")
+}
+
+record(mbbo, "$(P)IMPRANGE:SP")
+{
+    field(DTYP, "stream")
+
+    field(ZRST, "100m")
+    field(ONST, "1")
+    field(TWST, "10")
+    field(THST, "100")
+    field(FRST, "300")
+    field(FVST, "1k")
+    field(SXST, "3k")
+    field(SVST, "10k")
+    field(EIST, "30k")
+    field(NIST, "100k")
+    field(EGU, "ohms")
+
+    field(OUT, "@kse4980.proto setManualImpRange($(P)) $(PORT)")
+}
 
 record(mbbo, "$(P)MEAS_TIME:SP")
 {
@@ -155,8 +181,7 @@ record(stringout, "$(P)FUNC:SP")
 
 record(stringin, "$(P)FUNC")
 {
-        field(DTYP, "stream")
-
+    field(DTYP, "stream")
     field(INP, "@kse4980.proto getFunc $(PORT)")
     field(SCAN, "1 second")
 }
@@ -168,18 +193,16 @@ record(ai, "$(P)PRIMARY")
     field(INP, "@kse4980.proto fetchReadings($(P)SECONDARY) $(PORT)")
     field(DTYP, "stream")
     field(SCAN, ".5 second")
-  info(archive, "VAL")
-  info(interest, "HIGH")
-
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 record(ai, "$(P)SECONDARY")
 {
     field(DESC, "Secondary reading")
     field(DTYP, "Soft Channel")
-  info(archive, "VAL")
-  info(interest, "HIGH")
-
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 record(longin, "$(P)ERRORID")
@@ -195,21 +218,3 @@ record(stringin, "$(P)ERRORMSG")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)FREQ:SP")
-{
-field(DESC, "Signal Frequency setpoint")
-    field(OUT, "@kse4980.proto setSignalFreq($(P)) $(PORT)")
-    field(DTYP, "stream")
-  info(archive, "VAL")
-  info(interest, "HIGH")
-}
-
-record(ai, "$(P)FREQ")
-{
-field(DESC, "Signal Frequency")
-    field(INP, "@kse4980.proto getSignalFreq $(PORT)")
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-  info(archive, "VAL")
-  info(interest, "HIGH")
-}
