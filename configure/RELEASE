@@ -1,3 +1,15 @@
+
+ASYN=$(SUPPORT)/asyn/master
+BOOST=$(EPICS_ROOT)/libraries/master/boost
+CALC=$(SUPPORT)/calc/master
+ONCRPC=$(SUPPORT)/oncrpc/master
+SNCSEQ=$(SUPPORT)/seq/master
+UTILITIES=$(SUPPORT)/utilities/master
+ASUBFUNCTIONS=$(SUPPORT)/asubFunctions/master
+STREAMDEVICE=$(SUPPORT)/StreamDevice/master
+AUTOSAVE=$(SUPPORT)/autosave/master
+KSE4980=$(SUPPORT)/kse4980/master
+
 # optional extra local definitions here
 -include $(TOP)/configure/RELEASE.private
 
