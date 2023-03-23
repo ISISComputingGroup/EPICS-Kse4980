@@ -187,6 +187,7 @@ record(stringin, "$(P)FUNC")
     field(DTYP, "stream")
     field(INP, "@kse4980.proto getFunc $(PORT)")
     field(SCAN, "1 second")
+    field(FLNK, "$(P)_UNIT_WORKEROUTER.PROC")
 }
 
 
@@ -195,15 +196,13 @@ record(aSub, "$(P)_UNIT_WORKEROUTER")
 {
     field(INPA, "$(P)FUNC")
     field(FTA, "STRING")
-    field(NOA, "4")
 
-    field(OUTA, "$(P)PRIMARY.EGU")
+    field(OUTA, "$(P)PRIMARY.EGU PP")
     field(FTVA, "STRING")
-    field(NOVA, "10")
 
-    field(OUTB, "$(P)SECONDARY.EGU")
+    field(OUTB, "$(P)SECONDARY.EGU PP")
     field(FTVB, "STRING")
-    field(NOVB, "10")
+
 
     field(SNAM, "work_out_units") #todo write this
 }
