@@ -169,6 +169,7 @@ record(mbbo, "$(P)IMPRANGE:SP")
     field(EIST, "30k")
     field(NIST, "100k")
     field(OUT, "@kse4980.proto setManualImpRange($(P)) $(PORT)")
+    field(FLNK, "$(P)AUTORANGE:SP")
 }
 
 record(mbbo, "$(P)MEAS_TIME:SP")

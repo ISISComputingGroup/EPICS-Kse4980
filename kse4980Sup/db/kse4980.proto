@@ -51,7 +51,6 @@ setAutoRange {
 }
 
 
-
 getManualImpRange {
     out ":FUNC:IMP:RANG?";
     in "%{+1.00000E-01|+1.00000E+00|+1.00000E+01|+1.00000E+02|+3.00000E+02|+1.00000E+03|+3.00000E+03|+1.00000E+04|+3.00000E+04|+1.00000E+05}";
@@ -76,15 +75,8 @@ setSignalFreq {
 }
 
 
-
 setSignalTypeAndLevel {
-    out "%s,%(\$2)d" $errstr;
-    parseError;
-
-}
-
-setMeasurementTimeAndAveragingFactor {
-    out ":APER %s,%(\$2)d" $errstr;
+    out "%s %(\$2)d" $errstr;
     parseError;
 }
 
@@ -92,6 +84,13 @@ getMeasurementTimeAndAveragingFactor {
     out ":APER?";
     in "%{SHOR|MED|LONG},%(\$1.VAL)d";
 }
+
+setMeasurementTimeAndAveragingFactor {
+    out ":APER %s,%(\$2)d" $errstr;
+    parseError;
+    @init {out ":APER?"; in "%[_A-Z],%(\$2.VAL)d";}
+}
+
 
 getCurr {
     out ":CURR?";
