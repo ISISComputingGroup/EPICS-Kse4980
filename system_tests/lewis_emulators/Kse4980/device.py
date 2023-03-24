@@ -9,7 +9,18 @@ class SimulatedKse4980(StateMachineDevice):
         """
         Initialize all of the device's attributes.
         """
-        pass
+        self.freq = 0 
+        self.function = "CPD"
+        self.autorange = False
+        self.imprange = 1
+        self.volt_mode = True
+        self.signallevel = 0
+        self.reading1 = 0.0
+        self.reading2 = 0.0
+        self.errorid = 0 
+        self.errormsg = 0
+        self.meas_time = "SHOR"
+        self.avg_factor = 1
 
     def _get_state_handlers(self):
         return {
