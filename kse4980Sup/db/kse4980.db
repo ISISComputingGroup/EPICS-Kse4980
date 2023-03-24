@@ -25,6 +25,13 @@ record(bo, "$(P)RESET")
     field(OUT, "@kse4980.proto reset $(PORT)")
 }
 
+record(bo, "$(P)INIT")
+{
+    field(DTYP, "stream")
+    field(OUT, "@kse4980.proto init $(PORT)")
+    field(PINI, "YES")
+}
+
 record(stringin, "$(P)ID") {
     field(DESC, "The device ID")
     field(DTYP, "stream")
@@ -55,11 +62,33 @@ record(bi, "$(P)AUTORANGE")
     field(ONAM, "ON")
 }
 
-record(bi, "$(P)SIGNALTYPE")
+record(ai, "$(P)_TRY_CURR")
 {
     field(DTYP, "stream")
-    field(INP, "@kse4980.proto getSignalTypeAndLevel($(P)SIGNALLEVEL) $(PORT)")
+    field(INP, "@kse4980.proto getCurr $(PORT)")
     field(SCAN, "1 second")
+    field(FLNK, "$(P)SIGNALTYPE_CALC")
+}
+
+record(ai, "$(P)_TRY_VOLT")
+{
+    field(DTYP, "stream")
+    field(INP, "@kse4980.proto getVolt $(PORT)")
+    field(SCAN, "1 second")
+    field(FLNK, "$(P)SIGNALTYPE_CALC")
+}
+
+# if one of these goes into alarm, do not use it and use the other instead
+record(calcout, "$(P)SIGNALTYPE_CALC")
+{
+    field(INPA, "$(P)_TRY_CURR.STAT")
+    field(INPB, "$(P)_TRY_VOLT.STAT")
+    field(CALC, "(A&&!B)?1:0")
+    field(OUT, "$(P)SIGNALTYPE PP")
+}
+
+record(bi, "$(P)SIGNALTYPE")
+{
     field(ZNAM, "CURR")
     field(ONAM, "VOLT")
 }
@@ -70,19 +99,20 @@ record(bo, "$(P)SIGNALTYPE:SP")
     field(OUT, "@kse4980.proto setSignalTypeAndLevel($(P), $(P)SIGNALLEVEL:SP) $(PORT)")
     field(ZNAM, "CURR")
     field(ONAM, "VOLT")
-    #field(VAL, "$(P)SIGNALTYPE")
-    #todo needs init on signal type? 
-    #todo create tryCurr tryVolt and make calc for figuring out what mode we're in 
 }
 
-record(longin, "$(P)SIGNALLEVEL")
+record(calcout, "$(P)SIGNALLEVEL")
 {
+    field(INPA, "$(P)SIGNALTYPE")
+    field(INPB, "$(P)_TRY_CURR")
+    field(INPC, "$(P)_TRY_VOLT")
+    field(CALC, "A?C:B")
+    field(OUT, "$(P)SIGNALLEVEL:SP")
 }
 
 record(longout, "$(P)SIGNALLEVEL:SP")
 {
     field(FLNK, "SIGNALTYPE:SP.PROC")
-    field(VAL, "0")
 }
 
 record(ao, "$(P)FREQ:SP")
@@ -121,8 +151,6 @@ record(mbbi, "$(P)IMPRANGE")
     field(SVST, "10k")
     field(EIST, "30k")
     field(NIST, "100k")
-    #field(EGU, "ohms")
-
     field(INP, "@kse4980.proto getManualImpRange $(PORT)")
 }
 
@@ -140,8 +168,6 @@ record(mbbo, "$(P)IMPRANGE:SP")
     field(SVST, "10k")
     field(EIST, "30k")
     field(NIST, "100k")
-    #field(EGU, "ohms")
-
     field(OUT, "@kse4980.proto setManualImpRange($(P)) $(PORT)")
 }
 
@@ -203,8 +229,7 @@ record(aSub, "$(P)_UNIT_WORKEROUTER")
     field(OUTB, "$(P)SECONDARY.EGU PP")
     field(FTVB, "STRING")
 
-
-    field(SNAM, "work_out_units") #todo write this
+    field(SNAM, "work_out_units")
 }
 
 record(ai, "$(P)PRIMARY")
@@ -213,7 +238,7 @@ record(ai, "$(P)PRIMARY")
     field(DESC, "Primary reading")
     field(INP, "@kse4980.proto fetchReadings($(P)SECONDARY) $(PORT)")
     field(DTYP, "stream")
-    field(SCAN, ".5 second")
+    field(SCAN, "1 second")
     info(archive, "VAL")
     info(interest, "HIGH")
 }
@@ -229,6 +254,7 @@ record(ai, "$(P)SECONDARY")
 record(longin, "$(P)ERRORID")
 {
     field(DESC, "Numeric Err ID")
+    field(SCAN, "1 second")
     field(DTYP, "Soft Channel")
     field(HIHI, "1")
 }
@@ -236,6 +262,7 @@ record(longin, "$(P)ERRORID")
 record(stringin, "$(P)ERRORMSG")
 {
     field(DESC, "Error message")
+    field(SCAN, "1 second")
     field(DTYP, "Soft Channel")
 }
 

@@ -50,6 +50,7 @@ long WorkOutUnits(aSubRecord *prec) {
         {"RP", "Ohms"},
         {"RD", "Ohms"},
         {"B", "S"},
+        {"X", "Ohms"},
     }; 
 
     if (s.length() == 0)
@@ -88,6 +89,8 @@ long WorkOutUnits(aSubRecord *prec) {
     std::unordered_map<std::string, std::string>::iterator pos = egus.find(first_meas.str());
     if (pos == egus.end()) {
         // first egu not found - this is not good
+        errlogSevPrintf(errlogMajor, "%s Invalid unit for first measurement", first_meas.str());
+        return 1;
     } else {
         first_egu = std::string(pos->second);
     }
@@ -95,6 +98,8 @@ long WorkOutUnits(aSubRecord *prec) {
     pos = egus.find(second_meas.str());
     if (pos == egus.end()) {
         // second egu not found - this is not good either
+        errlogSevPrintf(errlogMajor, "%s Invalid unit for second measurement", second_meas.str());
+        return 1;
     } else {
         second_egu = std::string(pos->second);
     }
