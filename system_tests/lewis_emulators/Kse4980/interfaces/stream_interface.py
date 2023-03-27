@@ -15,22 +15,23 @@ class Kse4980StreamInterface(StreamInterface):
         super(Kse4980StreamInterface, self).__init__()
         # Commands that we expect via serial during normal operation
         self.commands = {
-            CmdBuilder(self.catch_all).arg("^#9.*$").build(),  # Catch-all command for debugging
             CmdBuilder(self.get_readings).escape(":FETC?").eos().build(),
-            CmdBuilder(self.set_freq).escape(f":FREQ ").float().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_freq).escape(":FREQ ").float().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_freq).escape(":FREQ?").eos().build(),
             CmdBuilder(self.get_curr).escape(":CURR?").eos().build(),
             CmdBuilder(self.get_volt).escape(":VOLT?").eos().build(),
             CmdBuilder(self.set_curr).escape(":CURR ").float().eos().build(),
             CmdBuilder(self.set_volt).escape(":VOLT ").float().eos().build(),
             CmdBuilder(self.get_imprange).escape(":FUNC:IMP:RANG?").eos().build(),
-            CmdBuilder(self.set_imprange).escape(":FUNC:IMP:RANG ").float().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_imprange).escape(":FUNC:IMP:RANG ").arg("0.1|1|10|100|300|1000|3000|10000|30000|100000").escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_autorange).escape(":FUNC:IMP:RANG:AUTO?").eos().build(),
-            CmdBuilder(self.set_autorange).escape(":FUNC:IMP:RANG:AUTO ").str().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_autorange).escape(":FUNC:IMP:RANG:AUTO ").arg("ON|OFF|1|0").escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_meas_time_and_avg_factor).escape(":APER?").eos().build(),
-            CmdBuilder(self.set_meas_time_and_avg_factor).escape("APER ").str().escape(",").float().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_meas_time_and_avg_factor).escape("APER ").arg("SHOR|MED|LONG").escape(",").float().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_func).escape(":FUNC:IMP?").eos().build(),
-            CmdBuilder(self.set_func).escape(":FUNC:IMP ").str().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_func).escape(":FUNC:IMP ").arg("CPD|CPQ|CPG|CPRP|CSD|CSQ|CSRS|LPD|LPQ|LPG|LPRP|LPRD|LSD|LSQ|LSRS|LSRD|RX|ZTD|ZTR|GB|YTD|YTR|VDID").escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.reset_device).escape(":*RST;*CLS;:INIT;").eos().build(),
+            CmdBuilder(self.init_device).escape(":INIT;").eos().build(),
         }
 
     def handle_error(self, request, error):
@@ -45,8 +46,11 @@ class Kse4980StreamInterface(StreamInterface):
         self.errorid = -171
         self.errormsg = "Invalid expression"
         self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))
-
-    def catch_all(self, command):
+    
+    def reset_device(self):
+        self.device._initialize_data()
+    
+    def init_device(self):
         pass
 
     def _error_str(self):
@@ -74,13 +78,12 @@ class Kse4980StreamInterface(StreamInterface):
         return f"{self.device.meas_time},{self.device.avg_factor}"
     
     def set_meas_time_and_avg_factor(self, meas_time, avg_factor):
-        # todoset  error if wrong
         self.device.meas_time = meas_time
         self.device.avg_factor = avg_factor
         return self._clear_and_return_error()
     
     def get_imprange(self):
-        return self.device.imprange
+        return f"{self.device.imprange:.5E}"
     
     def set_imprange(self, new_imprange):
         self.device.imprange = new_imprange
@@ -90,8 +93,7 @@ class Kse4980StreamInterface(StreamInterface):
         return 1 if self.device.autorange else 0
     
     def set_autorange(self, new_autorange):
-        # todoset  error if wrong
-        pass
+        self.device.autorange = new_autorange
         return self._clear_and_return_error()
 
     def get_func(self):
@@ -103,16 +105,21 @@ class Kse4980StreamInterface(StreamInterface):
     
     def get_curr(self):
         # check signal type here, and error if in volt mode
-        pass
+        return "" if self.device.volt_mode else return self.device.signallevel
 
     def get_volt(self):
         # check signal type here, and error if in curr mode
-        pass
+        return "" if not self.device.volt_mode else return self.device.signallevel
 
-    def set_curr(self):
-        pass
+    def set_curr(self, new_curr):
+        self.device.volt_mode = False
+        self.device.signallevel = new_curr
+        return self._clear_and_return_error()
 
-    def set_volt(self):
-        pass
+    def set_volt(self, new_volt):
+        self.device.volt_mode = True
+        self.device.signallevel = new_volt
+        return self._clear_and_return_error()
+
 
         
