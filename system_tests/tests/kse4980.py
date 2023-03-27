@@ -32,3 +32,15 @@ class Kse4980Tests(unittest.TestCase):
 
     def test_that_fails(self):
         self.fail("You haven't implemented any tests!")
+
+'''
+tests
+setting curr when volt works and vice versa and switches signal type
+setting function wrong does nothing 
+reset resets all
+impedance setting works 
+averaging factor setting updates ok
+meas time changing updates ok 
+readings gives both readings and both pvs update 
+
+'''

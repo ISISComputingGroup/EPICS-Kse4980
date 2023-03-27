@@ -27,7 +27,7 @@ class Kse4980StreamInterface(StreamInterface):
             CmdBuilder(self.get_autorange).escape(":FUNC:IMP:RANG:AUTO?").eos().build(),
             CmdBuilder(self.set_autorange).escape(":FUNC:IMP:RANG:AUTO ").arg("1|0").escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_meas_time_and_avg_factor).escape(":APER?").eos().build(),
-            CmdBuilder(self.set_meas_time_and_avg_factor).escape("APER ").arg("SHOR|MED|LONG").escape(",").float().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_meas_time_and_avg_factor).escape(":APER ").arg("SHOR|MED|LONG").escape(",").int().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_func).escape(":FUNC:IMP?").eos().build(),
             CmdBuilder(self.set_func).escape(":FUNC:IMP ").arg("CPD|CPQ|CPG|CPRP|CSD|CSQ|CSRS|LPD|LPQ|LPG|LPRP|LPRD|LSD|LSQ|LSRS|LSRD|RX|ZTD|ZTR|GB|YTD|YTR|VDID").escape(SYST_ERR).eos().build(),
             CmdBuilder(self.reset_device).escape(":*RST;*CLS;:INIT;").eos().build(),
@@ -111,11 +111,11 @@ class Kse4980StreamInterface(StreamInterface):
     
     def get_curr(self):
         # check signal type here, and error if in volt mode
-        return "" if self.device.volt_mode else self.device.signallevel
+        return None if self.device.volt_mode else self.device.signallevel
 
     def get_volt(self):
         # check signal type here, and error if in curr mode
-        return "" if not self.device.volt_mode else self.device.signallevel
+        return None if not self.device.volt_mode else self.device.signallevel
 
     def set_curr(self, new_curr):
         self.device.volt_mode = False

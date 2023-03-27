@@ -176,7 +176,7 @@ record(mbbo, "$(P)MEAS_TIME:SP")
 {
     field(DTYP, "stream")
     field(OUT, "@kse4980.proto setMeasurementTimeAndAveragingFactor($(P), $(P)AVG_FACTOR:SP) $(PORT)")
-    field(ZRST, "SHORT")
+    field(ZRST, "SHOR")
     field(ONST, "MED")
     field(TWST, "LONG")
 }
@@ -187,7 +187,7 @@ record(mbbi, "$(P)MEAS_TIME")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     field(INP, "@kse4980.proto getMeasurementTimeAndAveragingFactor($(P)AVG_FACTOR) $(PORT)")
-    field(ZRST, "SHORT")
+    field(ZRST, "SHOR")
     field(ONST, "MED")
     field(TWST, "LONG")
 }

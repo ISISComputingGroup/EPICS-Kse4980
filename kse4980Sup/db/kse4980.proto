@@ -76,7 +76,7 @@ setSignalFreq {
 
 
 setSignalTypeAndLevel {
-    out "%s %(\$2)d" $errstr;
+    out ":%s %(\$2)d" $errstr;
     parseError;
 }
 
