@@ -16,7 +16,7 @@ class Kse4980StreamInterface(StreamInterface):
         # Commands that we expect via serial during normal operation
         self.commands = {
             CmdBuilder(self.get_readings).escape(":FETC?").eos().build(),
-            CmdBuilder(self.set_freq).escape(":FREQ ").float().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_freq).escape(":FREQ ").any().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_freq).escape(":FREQ?").eos().build(),
             CmdBuilder(self.get_curr).escape(":CURR?").eos().build(),
             CmdBuilder(self.get_volt).escape(":VOLT?").eos().build(),
@@ -30,7 +30,7 @@ class Kse4980StreamInterface(StreamInterface):
             CmdBuilder(self.set_meas_time_and_avg_factor).escape(":APER ").arg("SHOR|MED|LONG").escape(",").int().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_func).escape(":FUNC:IMP?").eos().build(),
             CmdBuilder(self.set_func).escape(":FUNC:IMP ").arg("CPD|CPQ|CPG|CPRP|CSD|CSQ|CSRS|LPD|LPQ|LPG|LPRP|LPRD|LSD|LSQ|LSRS|LSRD|RX|ZTD|ZTR|GB|YTD|YTR|VDID").escape(SYST_ERR).eos().build(),
-            CmdBuilder(self.reset_device).escape(":*RST;*CLS;:INIT;").eos().build(),
+            CmdBuilder(self.reset_device).escape("*RST;*CLS;:INIT;").eos().build(),
             CmdBuilder(self.init_device).escape(":INIT;").eos().build(),
             CmdBuilder(self.id).escape("*IDN?").eos().build()
         }
@@ -69,10 +69,10 @@ class Kse4980StreamInterface(StreamInterface):
         return f"{Decimal(self.device.reading1):.5E},{Decimal(self.device.reading2):.5E},+1"
 
     def get_freq(self):
-        return self.device.freq
+        return f"{Decimal(self.device.freq):.5E}"
 
     def set_freq(self, new_freq):
-        self.device.freq = new_freq
+        self.device.freq = Decimal(new_freq)
         return self._clear_and_return_error()
     
     def get_meas_time_and_avg_factor(self):
@@ -84,7 +84,7 @@ class Kse4980StreamInterface(StreamInterface):
         return self._clear_and_return_error()
     
     def get_imprange(self):
-        # Yuck, the device always returns xE{+,-}0y where y is the exponent.
+        # Yuck, the device always returns xE{+,-}yy where y is the exponent prepended by 0 if y<10
         # There doesn't seem to be a nice way of doing this with the python format chars
         imprange_full = f"{Decimal(self.device.imprange):+.5E}"
         imprange_exp_stripped = imprange_full[:-1]
