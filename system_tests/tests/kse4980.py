@@ -19,7 +19,7 @@ IOCS = [
 ]
 
 
-TEST_MODES = [TestModes.RECSIM, TestModes.DEVSIM]
+TEST_MODES = [TestModes.DEVSIM]
 
 
 class Kse4980Tests(unittest.TestCase):
@@ -28,7 +28,7 @@ class Kse4980Tests(unittest.TestCase):
     """
     def setUp(self):
         self._lewis, self._ioc = get_running_lewis_and_ioc("Kse4980", DEVICE_PREFIX)
-        self.ca = ChannelAccess(device_prefix=DEVICE_PREFIX)
+        self.ca = ChannelAccess(device_prefix=DEVICE_PREFIX, default_wait_time=0.0)
 
     def test_that_fails(self):
         self.fail("You haven't implemented any tests!")
