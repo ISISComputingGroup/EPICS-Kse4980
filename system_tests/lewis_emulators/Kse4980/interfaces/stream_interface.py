@@ -29,7 +29,7 @@ class Kse4980StreamInterface(StreamInterface):
             CmdBuilder(self.get_meas_time_and_avg_factor).escape(":APER?").eos().build(),
             CmdBuilder(self.set_meas_time_and_avg_factor).escape(":APER ").arg("SHOR|MED|LONG").escape(",").int().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_func).escape(":FUNC:IMP?").eos().build(),
-            CmdBuilder(self.set_func).escape(":FUNC:IMP ").arg("CPD|CPQ|CPG|CPRP|CSD|CSQ|CSRS|LPD|LPQ|LPG|LPRP|LPRD|LSD|LSQ|LSRS|LSRD|RX|ZTD|ZTR|GB|YTD|YTR|VDID").escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.set_func).escape(":FUNC:IMP ").any().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.reset_device).escape("*RST;*CLS;:INIT;").eos().build(),
             CmdBuilder(self.init_device).escape(":INIT;").eos().build(),
             CmdBuilder(self.id).escape("*IDN?").eos().build()
@@ -44,9 +44,12 @@ class Kse4980StreamInterface(StreamInterface):
             error: problem
 
         """
+        self._set_error()
+        self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))
+    
+    def _set_error(self):
         self.errorid = -171
         self.errormsg = "Invalid expression"
-        self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))
     
     def reset_device(self):
         self.device._initialize_data()
@@ -106,7 +109,11 @@ class Kse4980StreamInterface(StreamInterface):
         return self.device.function
     
     def set_func(self, new_func):
-        self.device.function = new_func
+        if new_func in ["CPD","CPQ","CPG","CPRP","CSD","CSQ","CSRS","LPD","LPQ","LPG","LPRP","LPRD","LSD","LSQ","LSRS","LSRD","RX","ZTD","ZTR","GB","YTD","YTR","VDID"]:
+            self.device.function = new_func
+        else:
+            self._set_error()
+            return self._error_str()
         return self._clear_and_return_error()
     
     def get_curr(self):
