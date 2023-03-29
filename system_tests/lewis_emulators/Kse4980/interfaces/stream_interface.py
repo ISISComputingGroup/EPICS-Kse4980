@@ -48,8 +48,8 @@ class Kse4980StreamInterface(StreamInterface):
         self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))
     
     def _set_error(self):
-        self.errorid = -171
-        self.errormsg = "Invalid expression"
+        self.device.errorid = -171
+        self.device.errormsg = "Invalid expression"
     
     def reset_device(self):
         self.device._initialize_data()
@@ -61,8 +61,8 @@ class Kse4980StreamInterface(StreamInterface):
         return f"{self.device.errorid:+d},{self.device.errormsg}"
     
     def _clear_and_return_error(self):
-        self.errorid = 0
-        self.errormsg = "No error"
+        self.device.errorid = 0
+        self.device.errormsg = "No error"
         return self._error_str()
     
     def id(self):
