@@ -85,14 +85,15 @@ setMeasurementTimeAndAveragingFactor {
 }
 
 # these two are horrible. if in volt mode, CURR? does not respond, if in curr mode VOLT? does not respond.
-# for reading the level chain the two together and just accept the input as one will respond
-# for getting the signal type see if volt responds and accept either an empty string or a + (first char of exponent string)
-# if +/- we are in volt mode, if nothing we are in curr 
+# for reading the level chain the two together and just accept the input as only the correct reading will respond
 getSignalLevel {
     out ":VOLT?;:CURR?;";
     in "%e";
 }
 
+# the device won't respond with anything if we just ask for volt here if not in volt mode,
+# so tack on the id so it does respond with something. 
+# if +/- we are in volt mode (it has returned a reading), if nothing we are in curr 
 getSignalType {
     out ":VOLT?;*IDN?;";
     in "%#{+=1|-=1|=0}";
