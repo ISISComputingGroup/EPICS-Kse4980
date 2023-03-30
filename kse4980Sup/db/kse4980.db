@@ -62,35 +62,13 @@ record(bi, "$(P)AUTORANGE")
     field(ONAM, "ON")
 }
 
-record(ai, "$(P)_TRY_CURR")
-{
-    field(DTYP, "stream")
-    field(INP, "@kse4980.proto getCurr $(PORT)")
-    field(SCAN, "1 second")
-    field(FLNK, "$(P)SIGNALTYPE_CALC")
-}
-
-record(ai, "$(P)_TRY_VOLT")
-{
-    field(DTYP, "stream")
-    field(INP, "@kse4980.proto getVolt $(PORT)")
-    field(SCAN, "1 second")
-    field(FLNK, "$(P)SIGNALTYPE_CALC")
-}
-
-# if one of these goes into alarm, do not use it and use the other instead
-record(calcout, "$(P)SIGNALTYPE_CALC")
-{
-    field(INPA, "$(P)_TRY_CURR.STAT")
-    field(INPB, "$(P)_TRY_VOLT.STAT")
-    field(CALC, "(A&&!B)?1:0")
-    field(OUT, "$(P)SIGNALTYPE PP")
-}
-
 record(bi, "$(P)SIGNALTYPE")
 {
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
     field(ZNAM, "CURR")
     field(ONAM, "VOLT")
+    field(INP, "@kse4980.proto getSignalType $(PORT)")
 }
 
 record(bo, "$(P)SIGNALTYPE:SP")
@@ -102,18 +80,16 @@ record(bo, "$(P)SIGNALTYPE:SP")
     field(UDFS, "NO_ALARM")
 }
 
-record(calcout, "$(P)SIGNALLEVEL")
+record(ai, "$(P)SIGNALLEVEL")
 {
-    field(INPA, "$(P)SIGNALTYPE")
-    field(INPB, "$(P)_TRY_CURR")
-    field(INPC, "$(P)_TRY_VOLT")
-    field(CALC, "A?C:B")
-    field(OUT, "$(P)SIGNALLEVEL:SP")
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
+    field(INP, "@kse4980.proto getSignalLevel $(PORT)")
 }
 
 record(longout, "$(P)SIGNALLEVEL:SP")
 {
-    field(FLNK, "SIGNALTYPE:SP.PROC")
+    field(FLNK, "$(P)SIGNALTYPE:SP.PROC")
 }
 
 record(ao, "$(P)FREQ:SP")

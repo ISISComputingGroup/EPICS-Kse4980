@@ -20,8 +20,10 @@ class Kse4980StreamInterface(StreamInterface):
             CmdBuilder(self.get_freq).escape(":FREQ?").eos().build(),
             CmdBuilder(self.get_curr).escape(":CURR?").eos().build(),
             CmdBuilder(self.get_volt).escape(":VOLT?").eos().build(),
+            CmdBuilder(self.get_signallevel).escape(":VOLT?;:CURR?;").eos().build(),
             CmdBuilder(self.set_curr).escape(":CURR ").float().escape(SYST_ERR).eos().build(),
             CmdBuilder(self.set_volt).escape(":VOLT ").float().escape(SYST_ERR).eos().build(),
+            CmdBuilder(self.get_signaltype).escape(":VOLT?;*IDN?;").eos().build(),
             CmdBuilder(self.get_imprange).escape(":FUNC:IMP:RANG?").eos().build(),
             CmdBuilder(self.set_imprange).escape(":FUNC:IMP:RANG ").arg("0.1|1|10|100|300|1000|3000|10000|30000|100000").escape(SYST_ERR).eos().build(),
             CmdBuilder(self.get_autorange).escape(":FUNC:IMP:RANG:AUTO?").eos().build(),
@@ -118,11 +120,22 @@ class Kse4980StreamInterface(StreamInterface):
     
     def get_curr(self):
         # check signal type here, and error if in volt mode
-        return None if self.device.volt_mode else self.device.signallevel
+        return None if self.device.volt_mode else f"{Decimal(self.device.signallevel):+.5E}"
 
     def get_volt(self):
         # check signal type here, and error if in curr mode
-        return None if not self.device.volt_mode else self.device.signallevel
+        return None if not self.device.volt_mode else f"{Decimal(self.device.signallevel):+.5E}"
+    
+    def get_signallevel(self):
+        volt = self.get_volt()
+        curr = self.get_curr()
+        return volt if volt is not None else curr
+
+    def get_signaltype(self):
+        volt = self.get_volt()
+        id = self.id()
+        return volt + id if volt is not None else id
+
 
     def set_curr(self, new_curr):
         self.device.volt_mode = False

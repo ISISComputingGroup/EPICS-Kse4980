@@ -50,7 +50,6 @@ setAutoRange {
     @init {getAutoRange;}
 }
 
-
 getManualImpRange {
     out ":FUNC:IMP:RANG?";
     in "%{+1.00000E-01|+1.00000E+00|+1.00000E+01|+1.00000E+02|+3.00000E+02|+1.00000E+03|+3.00000E+03|+1.00000E+04|+3.00000E+04|+1.00000E+05}";
@@ -74,12 +73,6 @@ setSignalFreq {
     @init {getSignalFreq;}
 }
 
-
-setSignalTypeAndLevel {
-    out ":%s %(\$2)d" $errstr;
-    parseError;
-}
-
 getMeasurementTimeAndAveragingFactor {
     out ":APER?";
     in "%{SHOR|MED|LONG},%(\$1.VAL)d";
@@ -91,13 +84,24 @@ setMeasurementTimeAndAveragingFactor {
     @init {out ":APER?"; in "%[_A-Z],%(\$2.VAL)d";}
 }
 
-
-getCurr {
-    out ":CURR?";
-    in "%e"
+# these two are horrible. if in volt mode, CURR? does not respond, if in curr mode VOLT? does not respond.
+# for reading the level chain the two together and just accept the input as one will respond
+# for getting the signal type see if volt responds and accept either an empty string or a + (first char of exponent string)
+# if +/- we are in volt mode, if nothing we are in curr 
+getSignalLevel {
+    out ":VOLT?;:CURR?;";
+    in "%e";
 }
 
-getVolt {
-    out ":VOLT?";
-    in "%e";
+getSignalType {
+    InTerminator = "";
+    ReadTimeout = 50;
+    out ":VOLT?;*IDN?;";
+    in "%#{+=1|-=1|=0}";
+    ExtraInput=Ignore;
+}
+
+setSignalTypeAndLevel {
+    out ":%s %(\$2)d" $errstr;
+    parseError;
 }
