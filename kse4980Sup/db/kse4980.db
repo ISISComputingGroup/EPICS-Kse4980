@@ -99,6 +99,7 @@ record(bo, "$(P)SIGNALTYPE:SP")
     field(OUT, "@kse4980.proto setSignalTypeAndLevel($(P), $(P)SIGNALLEVEL:SP) $(PORT)")
     field(ZNAM, "CURR")
     field(ONAM, "VOLT")
+    field(UDFS, "NO_ALARM")
 }
 
 record(calcout, "$(P)SIGNALLEVEL")
