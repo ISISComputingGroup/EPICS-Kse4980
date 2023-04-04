@@ -101,7 +101,7 @@ getSignalType {
 }
 
 setSignalTypeAndLevel {
-    out ":%s %(\$2)d" $errstr;
+    out ":%s %(\$2)f" $errstr;
     parseError;
     @init {
         getSignalType;

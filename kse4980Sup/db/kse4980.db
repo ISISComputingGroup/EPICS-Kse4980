@@ -86,7 +86,7 @@ record(ai, "$(P)SIGNALLEVEL")
     field(INP, "@kse4980.proto getSignalLevel $(PORT)")
 }
 
-record(longout, "$(P)SIGNALLEVEL:SP")
+record(ao, "$(P)SIGNALLEVEL:SP")
 {
     field(FLNK, "$(P)SIGNALTYPE:SP.PROC")
 }
