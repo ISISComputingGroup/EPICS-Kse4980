@@ -84,11 +84,13 @@ record(ai, "$(P)SIGNALLEVEL")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     field(INP, "@kse4980.proto getSignalLevel $(PORT)")
+    field(PREC, "8")
 }
 
 record(ao, "$(P)SIGNALLEVEL:SP")
 {
     field(FLNK, "$(P)SIGNALTYPE:SP.PROC")
+    field(PREC, "8")
 }
 
 record(ao, "$(P)FREQ:SP")
@@ -218,6 +220,7 @@ record(ai, "$(P)PRIMARY")
     field(SCAN, "1 second")
     info(archive, "VAL")
     info(interest, "HIGH")
+    field(HIHI, "10000000")
 }
 
 record(ai, "$(P)SECONDARY")
@@ -226,6 +229,7 @@ record(ai, "$(P)SECONDARY")
     field(DTYP, "Soft Channel")
     info(archive, "VAL")
     info(interest, "HIGH")
+    field(HIHI, "10000000")
 }
 
 record(longin, "$(P)ERRORID")
