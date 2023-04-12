@@ -136,16 +136,21 @@ class Kse4980StreamInterface(StreamInterface):
         id = self.id()
         return volt + id if volt is not None else id
 
-
     def set_curr(self, new_curr):
+        # range: 0 to 100mA 
+        if 0 < new_curr > 0.1:
+            self._set_error()
+            return self._error_str()
         self.device.volt_mode = False
         self.device.signallevel = new_curr
         return self._clear_and_return_error()
 
     def set_volt(self, new_volt):
+        # range: 0 to 20V 
+        if 0 < new_volt > 20:
+            self._set_error()
+            return self._error_str()
         self.device.volt_mode = True
         self.device.signallevel = new_volt
         return self._clear_and_return_error()
 
-
-        

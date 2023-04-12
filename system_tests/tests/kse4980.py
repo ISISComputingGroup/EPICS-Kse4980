@@ -90,3 +90,15 @@ class Kse4980Tests(unittest.TestCase):
         self.ca.assert_that_pv_is("PRIMARY.EGU", expected_first_unit)
         self.ca.assert_that_pv_is("SECONDARY.EGU", expected_second_unit)
 
+
+    @parameterized.expand(parameterized_list([
+        ("CURR", 0.2),
+        ("VOLT", 21),
+    ]))
+    def test_GIVEN_signallevel_set_too_high_WHEN_setting_level_THEN_error_propagates(self, _, signaltype, over_limit):
+        self.ca.set_pv_value("SIGNALTYPE:SP", signaltype)
+
+        self.ca.set_pv_value("SIGNALLEVEL:SP", over_limit)
+
+        self.ca.assert_that_pv_is_not("ERRORID", 0)
+        self.ca.assert_that_pv_is_not("SIGNALLEVEL", over_limit)
