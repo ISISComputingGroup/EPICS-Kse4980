@@ -1,0 +1,109 @@
+OutTerminator = "\r\n";
+InTerminator = "\n";
+ReplyTimeout = 1000;
+
+errstr = ";:SYST:ERR?";
+
+getIDN {
+    out "*IDN?";
+    in "%/(.{0,39})/";
+    ExtraInput = Ignore;
+}
+
+reset { 
+    out "*RST;*CLS;:INIT;";
+}
+
+init {
+    out ":INIT;";
+}
+
+parseError {
+    in "%(\$1ERRORID)d,%(\$1ERRORMSG)/(.{0,39})/";
+}
+
+fetchReadings {
+    out ":FETC?";
+    in "%e,%(\$1)e,%*d";
+}
+
+getFunc { 
+    out ":FUNC:IMP?";
+    in "%s";
+}
+
+setFunc {
+    # chaka khan 
+    out ":FUNC:IMP %s" $errstr;
+    parseError;
+    @init {getFunc;}
+}
+
+getAutoRange { 
+    out ":FUNC:IMP:RANG:AUTO?";
+    in "%b";
+}
+
+setAutoRange { 
+    out ":FUNC:IMP:RANG:AUTO %d" $errstr;
+    parseError;
+    @init {getAutoRange;}
+}
+
+getManualImpRange {
+    out ":FUNC:IMP:RANG?";
+    in "%{+1.00000E-01|+1.00000E+00|+1.00000E+01|+1.00000E+02|+3.00000E+02|+1.00000E+03|+3.00000E+03|+1.00000E+04|+3.00000E+04|+1.00000E+05}";
+
+}
+
+setManualImpRange {
+    out ":FUNC:IMP:RANG %{0.1|1|10|100|300|1000|3000|10000|30000|100000}" $errstr;
+    parseError;
+    @init {getManualImpRange;}
+}
+
+getSignalFreq {
+    out ":FREQ?";
+    in "%e";
+}
+
+setSignalFreq {
+    out ":FREQ %e" $errstr;
+    parseError;
+    @init {getSignalFreq;}
+}
+
+getMeasurementTimeAndAveragingFactor {
+    out ":APER?";
+    in "%{SHOR|MED|LONG},%(\$1.VAL)d";
+}
+
+setMeasurementTimeAndAveragingFactor {
+    out ":APER %s,%(\$2)d" $errstr;
+    parseError;
+    @init {out ":APER?"; in "%[_A-Z],%(\$2.VAL)d";}
+}
+
+# these two are horrible. if in volt mode, CURR? does not respond, if in curr mode VOLT? does not respond.
+# for reading the level chain the two together and just accept the input as only the correct reading will respond
+getSignalLevel {
+    out ":VOLT?;:CURR?;";
+    in "%e";
+}
+
+# the device won't respond with anything if we just ask for volt here if not in volt mode,
+# so tack on the id so it does respond with something. 
+# if +/- we are in volt mode (it has returned a reading), if nothing we are in curr 
+getSignalType {
+    out ":VOLT?;*IDN?;";
+    in "%#{+=1|-=1|=0}";
+    ExtraInput=Ignore;
+}
+
+setSignalTypeAndLevel {
+    out ":%s %(\$2)f" $errstr;
+    parseError;
+    @init {
+        getSignalType;
+    }
+}
