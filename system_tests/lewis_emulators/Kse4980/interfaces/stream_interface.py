@@ -1,8 +1,9 @@
-from lewis.adapters.stream import StreamInterface, Cmd
-from lewis.utils.command_builder import CmdBuilder
+from decimal import Decimal
+
+from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
-from lewis.utils.replies import conditional_reply
-from decimal import Decimal 
+from lewis.utils.command_builder import CmdBuilder
+
 SYST_ERR = ";:SYST:ERR?"
 
 @has_log
